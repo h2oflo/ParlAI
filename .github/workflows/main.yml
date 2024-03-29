@@ -1,23 +1,44 @@
 name: Upload Website
 
 on:
-  push:
-    branches:
-    - main
+  pull_request:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+    - name: Build
+      run: |
+        pip3 install -r requirements.txt
+        cd website/
+        chmod +x generate.py
+        ./generate.py
+        mv static build
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@main
+      with:
+        name: build
+        path: build
+
   deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
-    
+      uses: actions/checkout@main
+    - name: Download Artifacts
+      uses: actions/download-artifact@main
+      with:
+        name: build
+        path: build
+      
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
         aws-region: us-east-1
-
-    - name: Echo Hello World ( first run )
-      run: echo "hello world"
+    - name: Deploy Artifacts to AWS S3
+      run: |
+        aws s3 cp ./build/* s3://<Bucket-Name> --recursive --acl public-read --region us-east-2
