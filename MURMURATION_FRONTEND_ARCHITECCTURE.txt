@@ -20,9 +20,9 @@ Decided to host the website statically on S3. Was not a hundred percent sure if 
 In terms of bring up the resources required, chose to write up a terraform module that would create a bucket
   with a randomly generated string at the end to ensure unique name of bucket. Also configured the bucket to 
   spin up with public access already allowed to ensure we could access resources within the bucket when we deploy
-  the project to the bucket.
+  the project to the bucket and instructed it to expect index.html as the index doc with error.html as the error doc.
 
-In terms of building a deploying, I added the configs to main.yml. I'm unfortunately not too familiar with Gitlab
+In terms of building a deploying, I added the configs to ./github/workflows/main.yml. I'm unfortunately not too familiar with Gitlab
   Actions and thus had to learn this one on the fly. Unfortunately, I also didn't have access to any runners to
   test out my configs and testing it was taking 27+ minutes to queue up on a runner github provides, so did my best
   with what I could read online with the configuration.

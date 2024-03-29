@@ -33,7 +33,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   )
 }
 
-resource "aws_s3_bucket_website_configuration" "blog" {
+resource "aws_s3_bucket_website_configuration" "parlai_site" {
   bucket = aws_s3_bucket.bucket.id
   index_document {
     suffix = "index.html"
