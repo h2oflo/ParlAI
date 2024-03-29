@@ -1,0 +1,35 @@
+Architecture of the website
+
+      User Request
+           │
+           ▼
+     DNS Resolution
+           │
+           ▼
+        Amazon S3
+           │
+           ▼
+     Content Delivery
+           │
+           ▼
+    Content Rendering
+
+Decided to host the website statically on S3. Was not a hundred percent sure if that was what was requested, but
+  figured that's what was wanted as the requested name of this file was *FRONTEND*.
+
+In terms of bring up the resources required, chose to write up a terraform module that would create a bucket
+  with a randomly generated string at the end to ensure unique name of bucket. Also configured the bucket to 
+  spin up with public access already allowed to ensure we could access resources within the bucket when we deploy
+  the project to the bucket.
+
+In terms of building a deploying, I added the configs to main.yml. I'm unfortunately not too familiar with Gitlab
+  Actions and thus had to learn this one on the fly. Unfortunately, I also didn't have access to any runners to
+  test out my configs and testing it was taking 27+ minutes to queue up on a runner github provides, so did my best
+  with what I could read online with the configuration.
+
+For the github workflow, I opted to use a build/deploy flow. This setup would pull down the entire project, build it,
+  then deploy the directory and only the directory into the s3 bucket. Fleshing this out to different job stages allows us
+  to be able to reuse the artifact build, say if we wanted to deploy this to different locations instead of just to a 
+  single S3 bucket, we could build to artifact and use it within several different stages if need be.
+  This separation also makes it easier to maintain different parts of the pipeline. In the case that a part of the pipeline
+  fails, we could also just rerun that individual job without having to rerun the entire thing.
